@@ -4,31 +4,71 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>XHS Downloader</title>
+    <style>
+        #loading {
+            display: none;
+        }
+        #error {
+            display: none;
+            color: red;
+        }
+        #emptyInput {
+            display: none;
+            color: red;
+        }
+    </style>
 </head>
 <body>
     <h1>XHS Downloader</h1>
     <p>Enter Post URL:</p>
     <input type="text" id="imageUrl" placeholder="Enter image URL">
     <button onclick="getDownloadUrl()">Get Download URL</button>
+    <div id="loading">Loading...</div>
     <div id="downloadUrls"></div>
-    <br>
+    <div id="error"></div>
+    <div id="emptyInput">↑
+        <br>Please enter a valid post URL.
+        <br>请输入小红书的分享链接</br>
+    </div>
     <p><b>If it displays "Access to ci.xiaohongshu.com is denied. You do not have user permission to view this page", refresh again to access.</b></p>
     <p><b>如显示 "访问 ci.xiaohongshu.com 被拒绝你没有查看此页面的用户权限"，再次刷新即可访问。</b></p>
 
     <script>
         async function getDownloadUrl() {
-            const imageUrl = document.getElementById('imageUrl').value;
-            const response = await fetch('/get_download_url', {
+            const imageUrl = document.getElementById('imageUrl').value.trim(); // Trim to remove leading/trailing white spaces
+            const loading = document.getElementById('loading');
+            loading.style.display = 'block';
+            const errorDiv = document.getElementById('error');
+            errorDiv.style.display = 'none';
+            const emptyInputDiv = document.getElementById('emptyInput');
+            emptyInputDiv.style.display = 'none';
+
+            if (imageUrl === '') {
+                emptyInputDiv.style.display = 'block';
+                loading.style.display = 'none';
+                return;
+            }
+
+            const response = await fetch('/download', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({ imageUrl })
             });
+
+            if (response.status === 429) {
+                errorDiv.innerText = 'Too many requests from this IP. Please try again later.';
+                errorDiv.style.display = 'block';
+                loading.style.display = 'none';
+                return;
+            }
+
             const data = await response.json();
             const downloadUrls = data.downloadUrl;
             const downloadUrlsDiv = document.getElementById('downloadUrls');
             downloadUrlsDiv.innerHTML = '';
+
             if (downloadUrls.length > 0) {
                 const ul = document.createElement('ul');
                 downloadUrls.forEach(url => {
@@ -44,7 +84,10 @@
             } else {
                 downloadUrlsDiv.innerText = 'No download URLs available.';
             }
+
+            loading.style.display = 'none';
         }
+
     </script>
 </body>
 </html>
