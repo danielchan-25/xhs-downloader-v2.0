@@ -16,6 +16,23 @@
             display: none;
             color: red;
         }
+
+        /* 设置页面布局和样式随屏幕尺寸变化 */
+        @media only screen and (max-width: 600px) {
+            /* 在小屏幕上将标题字体大小调小 */
+            h1 {
+                font-size: 24px;
+            }
+        }
+
+        /* 将备案号移动到底部并水平居中 */
+        footer {
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            text-align: center;
+            padding: 10px 0;
+        }
     </style>
 </head>
 <body>
@@ -32,6 +49,10 @@
     </div>
     <p><b>If it displays "Access to ci.xiaohongshu.com is denied. You do not have user permission to view this page", refresh again to access.</b></p>
     <p><b>如显示 "访问 ci.xiaohongshu.com 被拒绝你没有查看此页面的用户权限"，再次刷新即可访问。</b></p>
+
+    <footer>
+        <a href="https://beian.miit.gov.cn/" target="_blank">您的备案号</a>
+    </footer>
 
     <script>
         async function getDownloadUrl() {
