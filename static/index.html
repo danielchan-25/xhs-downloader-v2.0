@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>XHS Downloader</title>
+</head>
+<body>
+    <h1>XHS Downloader</h1>
+    <p>Enter Post URL:</p>
+    <input type="text" id="imageUrl" placeholder="Enter image URL">
+    <button onclick="getDownloadUrl()">Get Download URL</button>
+    <div id="downloadUrls"></div>
+
+    <script>
+        async function getDownloadUrl() {
+            const imageUrl = document.getElementById('imageUrl').value;
+            const response = await fetch('/get_download_url', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ imageUrl })
+            });
+            const data = await response.json();
+            const downloadUrls = data.downloadUrl;
+            const downloadUrlsDiv = document.getElementById('downloadUrls');
+            downloadUrlsDiv.innerHTML = ''; // Clear previous results
+            if (downloadUrls.length > 0) {
+                const ul = document.createElement('ul');
+                downloadUrls.forEach(url => {
+                    const li = document.createElement('li');
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.textContent = url;
+                    a.target = '_blank'; // Open links in new tab
+                    li.appendChild(a);
+                    ul.appendChild(li);
+                });
+                downloadUrlsDiv.appendChild(ul);
+            } else {
+                downloadUrlsDiv.innerText = 'No download URLs available.';
+            }
+        }
+    </script>
+</body>
+</html>
