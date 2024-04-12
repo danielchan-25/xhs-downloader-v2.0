@@ -1,17 +1,22 @@
 import json
+import logging
 from asyncio import run
 from source import XHS
 from flask import Flask, request, jsonify
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
+from werkzeug.middleware.proxy_fix import ProxyFix
 
 app = Flask(__name__, static_url_path='/')
-limiter = Limiter(get_remote_address, app=app, default_limits=["500/day", "100/hour"])
+app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_host=1)
+app.config['TRUSTED_PROXIES'] = ['8.134.204.10']
+limiter = Limiter(get_remote_address, app=app, default_limits=["100/day", "50/hour"])
+logging.basicConfig(filename='app.log', level=logging.INFO, format='%(asctime)s %(levelname)s: %(message)s')
 
 
 async def main(link):
     try:
-        work_path = "E:\\github\\XHS-Downloader"
+        work_path = ""
         folder_name = "Download"
         user_agent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36"
         cookie = ""
@@ -42,6 +47,7 @@ async def main(link):
             return download_url
 
     except Exception as e:
+        logging.error(f"An error occurred: {e}")
         return str(e)
 
 
@@ -57,7 +63,9 @@ def get_download_url():
     link = request.json.get('imageUrl')
     download_url = run(main(link))
     if isinstance(download_url, str):
+        logging.error(f"An error occurred: {download_url}")
         return jsonify({'error': download_url}), 500
+    logging.info("Download URL retrieved successfully.")
     return jsonify({'downloadUrl': download_url})
 
 
