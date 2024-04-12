@@ -11,6 +11,9 @@
     <input type="text" id="imageUrl" placeholder="Enter image URL">
     <button onclick="getDownloadUrl()">Get Download URL</button>
     <div id="downloadUrls"></div>
+    <br>
+    <p><b>If it displays "Access to ci.xiaohongshu.com is denied. You do not have user permission to view this page", refresh again to access.</b></p>
+    <p><b>如显示 "访问 ci.xiaohongshu.com 被拒绝你没有查看此页面的用户权限"，再次刷新即可访问。</b></p>
 
     <script>
         async function getDownloadUrl() {
@@ -25,7 +28,7 @@
             const data = await response.json();
             const downloadUrls = data.downloadUrl;
             const downloadUrlsDiv = document.getElementById('downloadUrls');
-            downloadUrlsDiv.innerHTML = ''; // Clear previous results
+            downloadUrlsDiv.innerHTML = '';
             if (downloadUrls.length > 0) {
                 const ul = document.createElement('ul');
                 downloadUrls.forEach(url => {
@@ -33,7 +36,7 @@
                     const a = document.createElement('a');
                     a.href = url;
                     a.textContent = url;
-                    a.target = '_blank'; // Open links in new tab
+                    a.target = '_blank';
                     li.appendChild(a);
                     ul.appendChild(li);
                 });
