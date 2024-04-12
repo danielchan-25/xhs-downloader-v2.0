@@ -6,7 +6,7 @@ from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
 
 app = Flask(__name__, static_url_path='/')
-limiter = Limiter(get_remote_address, app=app, default_limits=["50/day", "10/hour"])
+limiter = Limiter(get_remote_address, app=app, default_limits=["500/day", "100/hour"])
 
 
 async def main(link):
@@ -42,13 +42,12 @@ async def main(link):
 
 
 @app.route('/')
-@limiter.limit("5/10seconds", override_defaults=False)
 def index():
     return app.send_static_file('index.html')
 
 
 @app.route('/get_download_url', methods=['POST'])
-@limiter.limit("2/10seconds", override_defaults=False)
+@limiter.limit("10/day", override_defaults=False)
 def get_download_url():
     link = request.json.get('imageUrl')
     download_url = run(main(link))
