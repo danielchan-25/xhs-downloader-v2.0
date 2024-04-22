@@ -1,4 +1,4 @@
-# xhs-downloader
+# xhs-downloader-v2.0
 
 项目灵感来源：https://github.com/JoeanAmier/XHS-Downloader/tree/master
 
